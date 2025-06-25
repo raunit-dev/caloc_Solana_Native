@@ -1,21 +1,29 @@
 # 🧮 Solana Counter Program
 
-A simple, minimal Solana smart contract written in Rust that demonstrates how to increment or decrement a counter value stored in an on-chain account. The program uses [Borsh](https://borsh.io/) for serialization, and is designed as a native Solana program without the use of frameworks like Anchor.
+A minimal, educational Solana smart contract written in Rust that demonstrates on-chain integer counter logic. This program lets users increment, decrement, multiply, or divide a counter stored in a Solana account using Borsh serialization. No Anchor framework is used—this is a pure Rust, native Solana smart contract.
+
+---
+
+## 🌐 Live Deployment
+
+- **Program ID:** `9fMw19JQGh63bioSwxujdLMgqDUiRzLuvTnFTaTdjWws`
+- **Deployed on:** [devnet](https://solscan.io/account/9fMw19JQGh63bioSwxujdLMgqDUiRzLuvTnFTaTdjWws?cluster=devnet)
 
 ---
 
 ## 📦 Features
 
-- **Increment / Decrement Counter**: Allows on-chain storage and modification of a simple integer counter via transactions.
-- **Borsh Serialization**: Utilizes Borsh for efficient, schema-driven serialization of account data.
-- **Native Solana Program**: Pure Rust implementation for educational or starter purposes, with no Anchor dependency.
+- **Increment/Decrement/Multiply/Divide**: On-chain integer counter with atomic operations.
+- **Borsh Serialization**: Efficient, schema-driven serialization for account data.
+- **Native Solana Program**: Pure Rust implementation, no Anchor dependency.
+- **Error Handling**: Checks for overflow/underflow and division by zero.
 
 ---
 
 ## 📁 Project Structure
 
 ```
-sol-program-counter/
+caloc_Solana_Native/
 ├── Cargo.toml            # Rust package manifest for Solana program
 └── src/
     └── lib.rs            # Main program logic and Solana entrypoint
@@ -30,7 +38,7 @@ sol-program-counter/
 - [Rust](https://www.rust-lang.org/tools/install)
 - [Solana CLI](https://docs.solana.com/cli/install-solana-cli-tools)
 - [Borsh crate](https://crates.io/crates/borsh)
-- Solana toolchain configured for BPF target:  
+- Solana toolchain configured for BPF:  
   `rustup target add bpfel-unknown-unknown`
 
 ---
@@ -49,45 +57,46 @@ This outputs the program binary at `target/deploy/sol-program-counter.so`.
 
 ### 🚀 Deploy
 
-To deploy to your Solana cluster:
+To deploy to Solana devnet:
 
 ```bash
 solana program deploy target/deploy/sol-program-counter.so
 ```
 
+Or use the pre-deployed Program ID:  
+`9fMw19JQGh63bioSwxujdLMgqDUiRzLuvTnFTaTdjWws` on devnet.
+
 ---
 
 ## 🧩 Example: Serialization Logic
 
-The program demonstrates Borsh serialization for a simple `User` struct:
+The program uses Borsh for serialization. Example for a similar struct:
 
 ```rust
-use borsh::{BorshDeserialize, BorshSerialize, to_vec};
+use borsh::{BorshDeserialize, BorshSerialize};
 
-#[derive(Debug, BorshDeserialize, BorshSerialize)]
-struct User {
-    name: String,
-    age: u32
-}
-
-fn main() {
-    let u = User {
-        name: String::from("Raunit"),
-        age: 21,
-    };
-
-    let bytes = to_vec(&u).unwrap();
-    let u2 = User::try_from_slice(&bytes).unwrap();
-    println!("{:?}", u);
-    println!("{:?}", u2);
+#[derive(BorshDeserialize, BorshSerialize)]
+struct Counter {
+    count: u32,
 }
 ```
+
+## 🛠️ Instruction Set
+
+The program supports the following instructions:
+
+- `Increment(u32)`: Adds value to the counter.
+- `Decrement(u32)`: Subtracts value from the counter.
+- `Multiply(u32)`: Multiplies the counter.
+- `Divide(u32)`: Divides the counter (with division by zero check).
+
+All instructions are dispatched in the main entrypoint and update the on-chain `Counter` account.
 
 ---
 
 ## 🗺️ Roadmap
 
-- [x] On-chain counter with increment/decrement
+- [x] On-chain counter with increment/decrement/multiply/divide
 - [x] Borsh serialization demo
 - [ ] CLI or JavaScript client for on-chain interaction (coming soon)
 - [ ] Add reset/read instructions for the counter
