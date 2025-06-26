@@ -9,7 +9,9 @@ class CounterAccount { // Class for the counter state account
     }
 }
 
-const schema = { struct: { const: 'u32'}}; // Schema for the counter state account
+const schema = new Map([
+  [CounterAccount, { kind: 'struct', fields: [['count', 'u32']] }],
+]);
 
 const GREETING_SERIALIZED = borsh.serialize(
      schema,
@@ -35,10 +37,10 @@ test("counter does increase", async () => {
 
    const createCounterAccIx = SystemProgram.createAccount({
      fromPubkey: adminKeypair.publicKey,
-     lamports,
      newAccountPubkey: counterAccountKeypair.publicKey,
-     programId: programId,
+     lamports,
      space: GREETING_SIZE,
+     programId: programId,
    });
 
    const tx = new Transaction();
